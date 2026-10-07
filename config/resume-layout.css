@@ -1,0 +1,11 @@
+/* Reviewed resume pipeline layout override (approved by the user 2026-10-02).
+   Applied after templates/cv-template.jake.html by lib/resume-pipeline/render.mjs only;
+   the legacy generate-pdf.mjs path and the template itself are unchanged.
+   Spacing only: no font, font-size, page-margin or content changes. Tested on the
+   18-bullet main resume (data/resume-intake/2026-10-01/main.md), US Letter: one page,
+   ~19pt spare. Its hash is bound into baseline checks and approval fingerprints. */
+body { line-height: 1.30; }
+.section { margin-bottom: 4px; }
+.section-title { margin-bottom: 2px; }
+.job { margin-bottom: 3px; }
+.project { margin-bottom: 3px; }
