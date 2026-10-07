@@ -1,23 +1,22 @@
-# career-command-center
+# applyflow
 
-My fork of [career-ops](https://github.com/career-ops-hq/career-ops) (MIT), adapted for a US new-grad software engineering search. I use it to evaluate postings, track applications, and produce tailored one-page resumes, with checks that stop the tailoring step from inventing anything.
+Automated job-search pipeline. It scores postings, tracks applications, and tailors a one-page resume for each role without letting the AI invent anything.
 
-## What I added
+## How tailoring works
 
-- **Fact-locked tailoring.** Tailored resumes can only use bullets from an approved list. A checker blocks rewording, repeated facts, unlisted skills, layout edits and anything over one page, and runs automatically after every edit (`resume-tex/`).
-- **Reviewed resume pipeline.** Drafts are checked against a fact bank where numbers, tools and verbs are locked, and compared with the unchanged resume. Nothing is uploaded without an approval tied to the exact PDF (`lib/resume-pipeline/`).
-- **Fixes found by using it:** CV template CSS that scrambled PDF text order for ATS parsers, a job filter that misread citizenship and OPT wording, and false positives in the ATS and fact checkers.
+1. Three drafts are generated in parallel, each with a different strategy.
+2. Every bullet is checked against a locked fact bank. Numbers, tools and verbs must match the source, or the bullet reverts.
+3. Two independent reviewers score the drafts against the unchanged resume. A draft has to beat it in both to win.
+4. Approval is tied to the PDF's SHA-256, so any later change invalidates it. Submitting stays manual.
+
+A checker also runs after every resume edit and blocks reworded bullets, repeated facts, layout changes and anything over one page.
 
 ## Stack
 
-Node.js · Playwright · LaTeX (tectonic) · Python (pdfplumber)
-
-## Run
+Node.js · Playwright · LaTeX · Python
 
 ```
-npm install
-node doctor.mjs
-npm run test:resume
+npm install && npm run test:resume
 ```
 
-Built on career-ops by Santiago Fernández de Valderrama and contributors. See [LICENSE](LICENSE).
+Based on [career-ops](https://github.com/career-ops-hq/career-ops) (MIT) by Santiago Fernández de Valderrama.
