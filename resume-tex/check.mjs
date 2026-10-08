@@ -4,7 +4,9 @@
 //   node resume-tex/check.mjs <file.tex> [--no-compile]
 //   node resume-tex/check.mjs --hook        (Claude Code PostToolUse: reads tool JSON on stdin)
 //
-// Master: resume.tex (layout, headings and contact block are compared against it).
+// Masters: resume.tex is the main (layout and contact block are compared against it);
+// alternate masters resume-<name>.tex (e.g. a different project mix) add the headings they
+// carry. Every heading in a tailored file must come from one of the masters.
 // Library: data/resume-variants.md (approved bullets, groups, skills, banned phrases).
 // Exit 0 = OK; exit 1 (CLI) or 2 (hook) = problems, one per line.
 import fs from 'node:fs';
@@ -79,6 +81,7 @@ export function checkTex(file, { root = ROOT, compile = true } = {}) {
   const tex = fs.readFileSync(file, 'utf8');
   const masterPath = path.join(root, 'resume.tex');
   const isMaster = path.resolve(file) === path.resolve(masterPath);
+  const masters = fs.existsSync(root) ? fs.readdirSync(root).filter(f => /^resume(-[a-z0-9-]+)?\.tex$/.test(f)).map(f => path.join(root, f)) : [];
   const libPath = path.join(root, 'data/resume-variants.md');
   if (!fs.existsSync(libPath)) return ['No approved bullet library at data/resume-variants.md'];
   const lib = parseLibrary(fs.readFileSync(libPath, 'utf8'));
@@ -117,9 +120,9 @@ export function checkTex(file, { root = ROOT, compile = true } = {}) {
     const block = s => ws((s.match(/\\begin\{center\}([\s\S]*?)\\end\{center\}/) || [])[1] || '');
     if (block(doc.body) !== block(master.body)) problems.push('Name/contact block differs from resume.tex');
     for (const [cmd, n] of [['resumeSubheading', 4], ['resumeProjectHeading', 2]]) {
-      const known = new Set(commandArgs(master.body, cmd, n).map(a => a.join(' ¦ ')));
+      const known = new Set(masters.flatMap(m => commandArgs(split(fs.readFileSync(m, 'utf8')).body, cmd, n)).map(a => a.join(' ¦ ')));
       for (const args of commandArgs(doc.body, cmd, n)) {
-        if (!known.has(args.join(' ¦ '))) problems.push(`Heading differs from resume.tex (title/dates/location/tech must be copied exactly): ${args.join(' | ').slice(0, 110)}`);
+        if (!known.has(args.join(' ¦ '))) problems.push(`Heading differs from the masters (title/dates/location/tech must be copied exactly): ${args.join(' | ').slice(0, 110)}`);
       }
     }
   }

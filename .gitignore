@@ -218,3 +218,4 @@ data/intake-state.json
 
 # Fork: publish the fork-owned path list so CI coverage checks see it
 !config/local-paths.txt
+/resume-*.tex

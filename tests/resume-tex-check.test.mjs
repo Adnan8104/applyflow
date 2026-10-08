@@ -45,6 +45,17 @@ test('a technology added to a project heading is caught', t => {
   has(fixture(t, r => r('\\emph{Next.js, React, Recharts}', '\\emph{Next.js, React, TypeScript, Recharts}')), /Heading differs.*Dashboard/);
 });
 
+test('headings from an alternate master are accepted; headings from no master are not', t => {
+  const root = workspace(t);
+  const alt = MASTER.replace('{\\textbf{Dashboard} $|$ \\emph{Next.js, React, Recharts}}{Jan 2026}', '{\\textbf{Benchmark} $|$ \\emph{Python}}{Oct 2026}');
+  fs.writeFileSync(path.join(root, 'resume-alt.tex'), alt);
+  const file = path.join(root, 'tailored.tex');
+  fs.writeFileSync(file, alt);
+  assert.deepEqual(checkTex(file, { root }), []);
+  fs.writeFileSync(file, alt.replace('{\\textbf{Benchmark} $|$ \\emph{Python}}{Oct 2026}', '{\\textbf{Benchmark} $|$ \\emph{Python, CUDA}}{Oct 2026}'));
+  has(checkTex(file, { root }), /Heading differs from the masters/);
+});
+
 test('a changed metric (47 MB to 45 MB) is caught', t => {
   has(fixture(t, r => r('(47 MB to 17 MB)', '(45 MB to 17 MB)')), /not in approved library/);
 });
