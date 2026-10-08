@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { checkTex } from '../resume-tex/check.mjs';
+import { checkTex, gluedWords } from '../resume-tex/check.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FIXTURES = path.join(ROOT, 'tests/fixtures/resume-tex');
@@ -88,6 +88,11 @@ test('banned dates, skills outside the allowlist and layout edits are caught', t
 test('master compiles to one page and a two-page render fails', { skip: !HAS_TECTONIC && 'tectonic not installed' }, t => {
   assert.deepEqual(fixture(t, () => MASTER, { compile: true }), []);
   has(fixture(t, r => r('\\section{Technical Skills}', '\\newpage\n\\section{Technical Skills}'), { compile: true }), /must be exactly 1/);
+});
+
+test('glued-word detection flags squeezed lines but not long URLs or ordinary words', () => {
+  assert.deepEqual(gluedWords(['budgetreviews,andcontributedresearchandeditingtotheNationalAI', 'cleansing/transformation', 'linkedin.com/in/adnan-a-4b3448244-something-long', 'Representatives']),
+    ['budgetreviews,andcontributedresearchandeditingtotheNationalAI']);
 });
 
 test('hook mode ignores non-.tex files and reports problems with exit code 2', t => {

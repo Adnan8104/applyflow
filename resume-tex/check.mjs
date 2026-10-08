@@ -14,6 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import * as yaml from 'js-yaml';
 import { isMainModule } from '../lib/is-main-module.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -67,6 +68,22 @@ function commandArgs(body, name, count) {
     if (args.length === count) out.push(args);
   }
   return out;
+}
+
+// Words an ATS would read as one token: LaTeX squeezed the spaces out of a tight line.
+export const GLUED_MIN = 35;
+export function gluedWords(words) {
+  return words.filter(w => w.length >= GLUED_MIN && !/[@/]|\.(com|edu|org|io)\b/i.test(w));
+}
+
+// PDF words in flow order via the pipeline's pdfplumber helper; null when that toolchain is absent.
+function pdfWords(pdf, root) {
+  let python = 'python3';
+  try { python = yaml.load(fs.readFileSync(path.join(root, 'config/resume-pipeline.yml'), 'utf8'))?.render?.extraction_python || python; } catch {}
+  try {
+    const out = execFileSync(python, [path.join(ROOT, 'lib/resume-pipeline/extract-pdf.py'), pdf], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 60000 });
+    return JSON.parse(out).lines.map(l => l.text);
+  } catch { return null; }
 }
 
 const stripComments = s => s.split('\n').map(l => l.replace(/(^|[^\\])%.*$/, '$1')).join('\n');
@@ -134,6 +151,9 @@ export function checkTex(file, { root = ROOT, compile = true } = {}) {
       const log = fs.readFileSync(path.join(out, path.basename(file, '.tex') + '.log'), 'utf8');
       const pages = Number(log.match(/Output written on .*?\((\d+) pages?/)?.[1]);
       if (pages !== 1) problems.push(`PDF is ${pages || 'an unknown number of'} pages; must be exactly 1. Drop or swap bullets; never change spacing.`);
+      const words = pdfWords(path.join(out, path.basename(file, '.tex') + '.pdf'), root);
+      if (words === null) process.stderr.write('note: PDF text check skipped (python3 with pdfplumber not available)\n');
+      else for (const w of gluedWords(words)) problems.push(`Words run together in the PDF text (ATS reads them as one word); shorten or reword that bullet: "${w.slice(0, 60)}…"`);
     } catch (e) {
       problems.push(`Does not compile with tectonic: ${String(e.stderr || e.message).split('\n').find(l => /error/i.test(l)) || e.message}`);
     } finally { fs.rmSync(out, { recursive: true, force: true }); }
