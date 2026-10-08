@@ -12,6 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from '../lib/is-main-module.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ws = s => s.replace(/\s+/g, ' ').trim();
@@ -78,7 +79,9 @@ export function checkTex(file, { root = ROOT, compile = true } = {}) {
   const tex = fs.readFileSync(file, 'utf8');
   const masterPath = path.join(root, 'resume.tex');
   const isMaster = path.resolve(file) === path.resolve(masterPath);
-  const lib = parseLibrary(fs.readFileSync(path.join(root, 'data/resume-variants.md'), 'utf8'));
+  const libPath = path.join(root, 'data/resume-variants.md');
+  if (!fs.existsSync(libPath)) return ['No approved bullet library at data/resume-variants.md'];
+  const lib = parseLibrary(fs.readFileSync(libPath, 'utf8'));
   let doc;
   try { doc = split(tex); } catch (e) { return [e.message]; }
 
@@ -135,7 +138,7 @@ export function checkTex(file, { root = ROOT, compile = true } = {}) {
   return problems;
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('resume-tex/check.mjs')) {
+if (isMainModule(import.meta.url)) {
   const hook = process.argv.includes('--hook');
   let file = process.argv.slice(2).find(a => !a.startsWith('--'));
   if (hook) {

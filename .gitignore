@@ -210,8 +210,11 @@ documents/*
 data/intake-state.json
 
 # Fork: personal resume source, local diagnostics and working notes stay off GitHub
-resume.tex
-tmp/
-RESUME_PIPELINE.md
-PLAN.md
-PIPELINE_NOTES.md
+/resume.tex
+/tmp/
+/RESUME_PIPELINE.md
+/PLAN.md
+/PIPELINE_NOTES.md
+
+# Fork: publish the fork-owned path list so CI coverage checks see it
+!config/local-paths.txt

@@ -268,7 +268,7 @@ function fixture(t) {
   writeAtomic(path.join(root, 'config/resume-layout.css'), LAYOUT);
   writeAtomic(path.join(root, 'documents/master.pdf'), '%PDF-test-master');
   writeAtomic(path.join(root, 'config/job-policy.yml'), yaml.dump({ referral_protection: { hard_block: [{ family: 'Protected', names: ['Protected Company'], domains: ['protected.example'] }], review: [], allow: [] } }));
-  const config = yaml.load(fs.readFileSync(path.join(ROOT, 'config/resume-pipeline.yml'), 'utf8'));
+  const config = yaml.load(fs.readFileSync(path.join(ROOT, 'config/resume-pipeline.example.yml'), 'utf8'));
   delete config.source; // fixture exercises the default cv.md source
   for (const stage of ['parser', 'writer', 'claim', 'reviewer']) config.models[stage].model = 'mock-model';
   Object.assign(config.render, { approved_template_sha256: hash(TEMPLATE), approved_layout_sha256: hash(LAYOUT), approved_baseline_pdf: 'documents/master.pdf', approved_baseline_sha256: fileHash(path.join(root, 'documents/master.pdf')), approved_master_sha256: hash(MASTER) });

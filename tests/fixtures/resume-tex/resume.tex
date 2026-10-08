@@ -1,0 +1,124 @@
+%-------------------------
+% Sample resume for resume-tex checker tests (fictional person).
+%-------------------------
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontspec}
+
+\defaultfontfeatures{Ligatures=NoCommon}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Margins: ~0.47in top, ~0.29in bottom, 0.50in sides
+\usepackage[letterpaper, top=0.50in, bottom=0.29in, left=0.5in, right=0.5in]{geometry}
+
+\urlstyle{same}
+\setlist[itemize]{itemsep=0pt,topsep=0pt,parsep=0pt,partopsep=0pt}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-5.8pt}\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-3pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-5pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{\small#1} & \small#2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-1pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \vspace{-3pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \small#2 \\
+    \end{tabular*}\vspace{-0.9pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=14.1pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-7.1pt}}
+
+%-------------------------------------------
+\begin{document}
+
+\begin{center}
+    {\huge \bfseries Alex Example} \\ \vspace{1pt}
+    \small
+    alex@example.com $|$ github.com/alex-example
+\end{center}
+
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Example State University}{Aug. 2023 -- May 2027}
+      {B.S. Computer Science $|$ GPA: 3.50}{Springfield, IL}
+      \resumeItemListStart
+        \resumeItem{Relevant Coursework: Algorithms, Databases, Machine Learning}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Data Engineer Intern}{June 2024 -- Aug. 2024}
+      {Acme Logistics}{Chicago, IL}
+      \resumeItemListStart
+        \resumeItem{Automated cross-database verification with NiFi processors (ExecuteSQL, ExecuteScript with Groovy), cutting reconciliation effort by an estimated 50\%.}
+        \resumeItem{Compressed 3D assets to cut model size 64\% (47 MB to 17 MB).}
+        \resumeItem{Designed phase gating in deterministic Python; integrated six LLM providers behind one interface.}
+        \resumeItem{Synthesized findings into 30+ data tables for budget reviews.}
+      \resumeItemListEnd
+    \resumeSubheading
+      {Research Assistant}{Sept. 2026 -- Present}
+      {Example State University}{Springfield, IL}
+      \resumeItemListStart
+        \resumeItem{Contributed editing to two published reports.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{Dashboard} $|$ \emph{Next.js, React, Recharts}}{Jan 2026}
+      \resumeItemListStart
+        \resumeItem{Built a full-stack market analysis tool with real-time charts.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Python, SQL, JavaScript/TypeScript} \\
+     \textbf{Frameworks}{: React, Next.js, FastAPI}
+    }}
+ \end{itemize}
+
+\end{document}

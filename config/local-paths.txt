@@ -1,0 +1,24 @@
+# Files this fork owns that upstream career-ops does not ship.
+# Listed here (not in update-system.mjs SYSTEM_PATHS) because a SYSTEM_PATHS
+# file absent upstream is pruned — deleted — by `update-system.mjs apply`.
+
+# CV quality gates (2026-09-22/23)
+cv-gate.mjs
+cv-coverage-check.mjs
+
+# F-1 / early-career job policy classifier wired into scan.mjs
+lib/job-policy.mjs
+
+# Fork attribution for the Career Command Center rename
+THIRD_PARTY_NOTICES.md
+
+# Local multi-candidate resume workflow. Upstream changes to the existing
+# renderer/web files still need a manual merge; this list cannot protect those.
+resume-pipeline.mjs
+lib/resume-pipeline/
+resume-tex/
+config/resume-layout.css
+config/resume-pipeline.example.yml
+RESUME_PIPELINE.md
+PLAN.md
+PIPELINE_NOTES.md

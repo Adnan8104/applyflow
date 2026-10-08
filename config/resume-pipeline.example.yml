@@ -1,0 +1,38 @@
+schema_version: 1
+candidates: 3
+concurrency: 3
+reviewer_margin: 2
+max_calls: 80
+max_output_tokens: 12000
+timeout_ms: 180000
+# Master resume + fact bank used by the pipeline. Copy this file to
+# config/resume-pipeline.yml and point these at your own files.
+source:
+  master: cv.md
+  fact_bank: data/fact_bank.yaml
+# No provider is contacted until enabled, configured, and explicitly confirmed at run time.
+models:
+  enabled: false
+  endpoint: ""
+  api_key_env: RESUME_PIPELINE_API_KEY
+  parser: { model: "", temperature: 0 }
+  writer: { model: "", temperature: 0.2 }
+  claim: { model: "", temperature: 0 }
+  reviewer: { model: "", temperature: 0 }
+strategies:
+  - "Conservative: select and reorder source bullets; rephrase only when source-backed JD terms clarify the work. Unchanged is valid."
+  - "JD alignment: emphasize demonstrated responsibilities using JD vocabulary without adding scope, ownership, outcomes, technologies or metrics."
+  - "Impact first: lead each role with its strongest quantified JD-relevant evidence; tighten wording without losing metrics or qualifiers."
+render:
+  template: templates/cv-template.jake.html
+  # US Letter for US applications; a4 is also supported.
+  format: letter
+  # Pipeline-only spacing override. Empty disables it.
+  layout_css: config/resume-layout.css
+  # Pin these after reviewing an unchanged-master render. Empty values block prepare.
+  approved_template_sha256: ""
+  approved_layout_sha256: ""
+  approved_baseline_pdf: ""
+  approved_baseline_sha256: ""
+  approved_master_sha256: ""
+  extraction_python: python3

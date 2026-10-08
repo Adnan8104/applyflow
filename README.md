@@ -1,6 +1,6 @@
 # applyflow
 
-Automated job-search pipeline. It scores postings, tracks applications, and tailors a one-page resume for each role without letting the AI invent anything.
+Automated job-search pipeline. It scores postings with A-H evaluation reports, tracks applications, and tailors a one-page resume for each role without letting the AI invent anything.
 
 ## How tailoring works
 
@@ -11,6 +11,10 @@ Automated job-search pipeline. It scores postings, tracks applications, and tail
 
 A checker also runs after every resume edit and blocks reworded bullets, repeated facts, layout changes and anything over one page.
 
+| Rule | |
+|---|---|
+| **Human-in-the-Loop** | The system never submits an application -- you always have the final call <!-- hitl: absolute guarantee. Do not add "automatically", "by itself", "without your permission" or any other hedge when translating this row. --> |
+
 ## Stack
 
 Node.js · Playwright · LaTeX · Python
@@ -18,5 +22,7 @@ Node.js · Playwright · LaTeX · Python
 ```
 npm install && npm run test:resume
 ```
+
+Runs inside Claude Code or Codex: describe the task in plain language, or headless with `codex exec "prompt"` (see [CODEX.md](CODEX.md)).
 
 Based on [career-ops](https://github.com/career-ops-hq/career-ops) (MIT) by Santiago Fernández de Valderrama.

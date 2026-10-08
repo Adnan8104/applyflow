@@ -8,7 +8,7 @@
   },
   "scripts": {
     "resume": "node resume-pipeline.mjs",
-    "test:resume": "node --test tests/resume-pipeline.test.mjs",
+    "test:resume": "node --test tests/resume-pipeline.test.mjs tests/resume-tex-check.test.mjs",
     "doctor": "node doctor.mjs",
     "or": "node openrouter-runner.mjs",
     "or:scan": "node openrouter-runner.mjs scan",

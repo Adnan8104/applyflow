@@ -30,7 +30,8 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: web/package-lock.json
-      - run: npm ci
+      # npm ci rejects this lockfile (npm bundled-deps bug in a Tailwind wasm package).
+      - run: npm install --no-audit --no-fund
       - run: npm test
       - run: npx tsc --noEmit
       - run: npm run build
