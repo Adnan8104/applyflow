@@ -72,6 +72,8 @@ jobs:
           if-no-files-found: ignore
   upgrade-gate:
     name: Upgrade regression gate
+    # Needs upstream release tags in history; this fork's history starts fresh.
+    if: github.repository == 'career-ops-hq/career-ops'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

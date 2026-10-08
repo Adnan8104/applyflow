@@ -249,10 +249,13 @@ test('CSV quotes commas, newlines and quotes, protects formulas and rejects malf
 test('path containment allows new nested directories, rejects traversal/symlinks; job identities stay distinct', t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'resume-path-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  assert.ok(contained(root, 'new/deep/file.json').endsWith('new/deep/file.json'));
+  assert.ok(contained(root, 'new/deep/file.json').endsWith(path.join('new', 'deep', 'file.json')));
   assert.throws(() => contained(root, '../outside'), /escapes/);
-  fs.symlinkSync('/tmp/missing-resume-target', path.join(root, 'link'));
-  assert.throws(() => contained(root, 'link/test'), /Symlink/);
+  // Windows needs a privilege to create symlinks; elsewhere the check must run.
+  let linked = true;
+  try { fs.symlinkSync(path.join(os.tmpdir(), 'missing-resume-target'), path.join(root, 'link')); }
+  catch (e) { if (process.platform !== 'win32' || e.code !== 'EPERM') throw e; linked = false; }
+  if (linked) assert.throws(() => contained(root, 'link/test'), /Symlink/);
   assert.equal(jobUrl('https://jobs.ashbyhq.com/acme/req1/application'), jobUrl('https://jobs.ashbyhq.com/acme/req1'));
   assert.notEqual(jobUrl('https://jobs.ashbyhq.com/acme/req1'), jobUrl('https://jobs.ashbyhq.com/acme/req2'));
   assert.notEqual(jobUrl('https://careers.example/#/job/1'), jobUrl('https://careers.example/#/job/2'));
