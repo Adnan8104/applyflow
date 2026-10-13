@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as yaml from 'js-yaml';
 import { approveTex } from '../resume-tex/approve.mjs';
-import { requireApproval } from '../lib/resume-pipeline/approval.mjs';
+import { requireApproval, uploadName } from '../lib/resume-pipeline/approval.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FIXTURES = path.join(ROOT, 'tests/fixtures/resume-tex');
@@ -36,6 +36,7 @@ test('a checked LaTeX resume is approved for one job and the apply flow can load
   const got = requireApproval(w.root, URL);
   assert.equal(got.record.kind, 'latex');
   assert.equal(got.upload.mimeType, 'application/pdf');
+  assert.equal(got.upload.name, 'Resume.pdf'); // no profile in this workspace
   assert.equal(got.record.pdf_sha256, out.sha256);
   assert.throws(() => requireApproval(w.root, 'https://jobs.ashbyhq.com/acme/req2'), /approve it for this exact job/);
 });
@@ -68,4 +69,14 @@ test('referral-protected companies and missing details are refused', async t => 
   await assert.rejects(w.approve({ company: 'Protected Co' }), /Referral protection/);
   await assert.rejects(w.approve({ role: '' }), /Company and role required/);
   await assert.rejects(w.approve({ url: 'http://insecure.example/job' }), /HTTPS/);
+});
+
+test('uploads are named after the candidate, never an internal hash', t => {
+  const w = workspace(t);
+  fs.writeFileSync(path.join(w.root, 'config/profile.yml'), yaml.dump({ candidate: { full_name: "  Jane  O'Brien-Smith <script>/../x " } }));
+  assert.equal(uploadName(w.root), "Jane O'Brien-Smith script..x.pdf");
+  fs.writeFileSync(path.join(w.root, 'config/profile.yml'), yaml.dump({ candidate: { full_name: 'José Núñez' } }));
+  assert.equal(uploadName(w.root), 'José Núñez.pdf');
+  fs.writeFileSync(path.join(w.root, 'config/profile.yml'), yaml.dump({ candidate: {} }));
+  assert.equal(uploadName(w.root), 'Resume.pdf');
 });
