@@ -80,3 +80,16 @@ test('uploads are named after the candidate, never an internal hash', t => {
   fs.writeFileSync(path.join(w.root, 'config/profile.yml'), yaml.dump({ candidate: {} }));
   assert.equal(uploadName(w.root), 'Resume.pdf');
 });
+
+test('an embedded Greenhouse form resolves to the posting approval for the same job ID only', async t => {
+  const w = workspace(t);
+  const posting = 'https://careers.example.com/job/1?gh_jid=7992556';
+  await w.approve({ url: posting });
+  const a = requireApproval(w.root, posting);
+  const b = requireApproval(w.root, 'https://job-boards.greenhouse.io/embed/job_app?for=example&token=7992556&b=https%3A%2F%2Fcareers.example.com');
+  assert.equal(b.record.pdf_sha256, a.record.pdf_sha256);
+  assert.equal(requireApproval(w.root, 'https://job-boards.greenhouse.io/example/jobs/7992556').record.pdf_sha256, a.record.pdf_sha256);
+  assert.throws(() => requireApproval(w.root, 'https://job-boards.greenhouse.io/embed/job_app?for=example&token=7992557'), /approve it for this exact job/);
+  assert.throws(() => requireApproval(w.root, 'https://evil.example.com/apply?gh_jid=7992556'), /approve it for this exact job/);
+  assert.throws(() => requireApproval(w.root, 'https://greenhouse.io.evil.example/embed/job_app?token=7992556'), /approve it for this exact job/);
+});
