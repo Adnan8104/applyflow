@@ -19,6 +19,9 @@ lib/resume-pipeline/
 resume-tex/
 config/resume-layout.css
 config/resume-pipeline.example.yml
+config/profile.latex.example.yml
+modes/_custom.latex.template.md
+LATEX_RESUME_SETUP.md
 RESUME_PIPELINE.md
 PLAN.md
 PIPELINE_NOTES.md

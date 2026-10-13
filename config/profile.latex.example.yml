@@ -1,0 +1,61 @@
+# Copy to config/profile.yml for the approved LaTeX workflow.
+# Fill from your own resume or statements. Blank means unknown, not an answer.
+# If a profile already exists, merge missing fields without replacing it.
+candidate:
+  full_name: ""
+  email: ""
+  phone: ""
+  location: ""
+  linkedin: ""
+  github: ""
+  portfolio_url: ""
+
+target_roles:
+  primary: []
+  archetypes: []
+
+narrative:
+  headline: ""
+  exit_story: ""
+  superpowers: []
+  proof_points: []
+
+compensation:
+  target_range: ""
+  currency: ""
+  minimum: ""
+  location_flexibility: ""
+
+location:
+  country: ""
+  city: ""
+  timezone: ""
+  visa_status: ""
+  authorized_in: []
+  # Add needs_sponsorship only after the user states their situation.
+  # Until then, do not treat missing immigration details as verified eligibility.
+
+language:
+  output: en
+
+spend_tier: standard
+
+cv:
+  output_format: latex
+  max_pages: 1
+  strict_pages: true
+
+latex:
+  source: resume.tex
+
+application_answers:
+  earliest_start_date: ""
+  relocation: ""
+  onsite: ""
+  # Reference only: the agent NEVER fills these legal or sensitive fields.
+  authorized_to_work_us: ""
+  requires_sponsorship: ""
+  veteran_status: ""
+  gender: ""
+  race_ethnicity: ""
+  disability: ""
