@@ -181,7 +181,7 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
   prune();
   if (globalThis.__coIdleTimer) clearTimeout(globalThis.__coIdleTimer); // someone's active
   const browser = await headedBrowser();
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = await browser.newContext({ viewport: null });
   context.setDefaultTimeout(8000); // no single action hangs the whole open/fill
   const page = await context.newPage();
   const abort = async (msg: string): Promise<never> => {
@@ -313,7 +313,7 @@ export function getSession(id: string): Session | undefined {
 export async function newDrivePage(url: string): Promise<{ page: Page; context: BrowserContext }> {
   if (globalThis.__coIdleTimer) clearTimeout(globalThis.__coIdleTimer);
   const browser = await headedBrowser();
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = await browser.newContext({ viewport: null });
   context.setDefaultTimeout(8000);
   const page = await context.newPage();
   await gotoResilient(page, url);
@@ -568,6 +568,10 @@ export async function handoffSession(id: string): Promise<void> {
   try {
     const cdp = await s.context.newCDPSession(s.page);
     const { windowId } = (await cdp.send("Browser.getWindowForTarget")) as { windowId: number };
+    // Existing sessions may still have a fixed emulated viewport. Release it
+    // before human review so the rendered page and native click positions agree.
+    await cdp.send("Emulation.clearDeviceMetricsOverride");
+    await cdp.send("Emulation.setPageScaleFactor", { pageScaleFactor: 1 });
     await cdp.send("Browser.setWindowBounds", {
       windowId,
       bounds: { left: 80, top: 60, width: 1280, height: 920, windowState: "normal" },
