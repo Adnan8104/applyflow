@@ -257,6 +257,8 @@ test('path containment allows new nested directories, rejects traversal/symlinks
   catch (e) { if (process.platform !== 'win32' || e.code !== 'EPERM') throw e; linked = false; }
   if (linked) assert.throws(() => contained(root, 'link/test'), /Symlink/);
   assert.equal(jobUrl('https://jobs.ashbyhq.com/acme/req1/application'), jobUrl('https://jobs.ashbyhq.com/acme/req1'));
+  assert.equal(jobUrl('https://jobs.ashbyhq.com/acme/req1?utm_source=freehire.me&gclid=x'), jobUrl('https://jobs.ashbyhq.com/acme/req1'));
+  assert.notEqual(jobUrl('https://careers.example/job?gh_jid=1'), jobUrl('https://careers.example/job?gh_jid=2'));
   assert.notEqual(jobUrl('https://jobs.ashbyhq.com/acme/req1'), jobUrl('https://jobs.ashbyhq.com/acme/req2'));
   assert.notEqual(jobUrl('https://careers.example/#/job/1'), jobUrl('https://careers.example/#/job/2'));
 });

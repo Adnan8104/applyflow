@@ -93,3 +93,18 @@ test('an embedded Greenhouse form resolves to the posting approval for the same 
   assert.throws(() => requireApproval(w.root, 'https://evil.example.com/apply?gh_jid=7992556'), /approve it for this exact job/);
   assert.throws(() => requireApproval(w.root, 'https://greenhouse.io.evil.example/embed/job_app?token=7992556'), /approve it for this exact job/);
 });
+
+test('a job already marked applied in the tracker is refused unless re-applying is explicit', async t => {
+  const w = workspace(t);
+  fs.writeFileSync(path.join(w.root, 'data/applications.md'), [
+    '| # | Date | Company | Via | Role | Score | Status | PDF | Report | Notes | URL |',
+    '|---|------|---------|-----|------|-------|--------|-----|--------|-------|-----|',
+    '| 1 | 2026-10-01 | Acme | — | Engineer | N/A | Applied | ✅ | — | via another session | https://jobs.ashbyhq.com/acme/req1?utm_source=board |',
+    '| 2 | 2026-10-01 | Other | — | Analyst | N/A | Evaluated | ✅ | — | not applied | https://jobs.ashbyhq.com/other/req9 |',
+  ].join('\n'));
+  await assert.rejects(w.approve(), /Already applied to this job[\s\S]*#1 Acme/);
+  await assert.rejects(w.approve({ url: 'https://jobs.ashbyhq.com/acme/req2', role: 'Engineer' }), /Already applied/); // same company + role
+  await w.approve({ url: 'https://jobs.ashbyhq.com/other/req9', company: 'Other', role: 'Analyst' }); // evaluated, not applied
+  const ok = await w.approve({ allowReapply: true });
+  assert.equal(ok.status, 'approved');
+});
