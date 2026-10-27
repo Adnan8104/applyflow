@@ -30,6 +30,10 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: web/package-lock.json
+      # The web app imports the repo-root resume pipeline (lib/resume-pipeline),
+      # whose modules need the root dependencies (js-yaml).
+      - run: npm install --ignore-scripts --no-audit --no-fund
+        working-directory: .
       # npm ci rejects this lockfile (npm bundled-deps bug in a Tailwind wasm package).
       - run: npm install --no-audit --no-fund
       - run: npm test
