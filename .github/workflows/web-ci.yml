@@ -8,10 +8,14 @@ on:
   pull_request:
     paths:
       - 'web/**'
+      - 'lib/resume-pipeline/**'
+      - '.github/workflows/web-ci.yml'
   push:
     branches: [main]
     paths:
       - 'web/**'
+      - 'lib/resume-pipeline/**'
+      - '.github/workflows/web-ci.yml'
 
 permissions:
   contents: read
