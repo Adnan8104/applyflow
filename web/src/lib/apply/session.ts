@@ -480,9 +480,15 @@ export async function fillSession(
         await loc.pressSequentially(value, { delay: 15 }).catch(async () => {
           await s.page.keyboard.type(value);
         });
-        await s.page.waitForTimeout(300);
         const esc = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const menu = '.select__menu .select__option, .select__menu-list [role="option"], [class*="menu" i] [role="option"]';
+        const menu = '.select__menu .select__option, .select__menu-list [role="option"], [class*="menu" i] [role="option"], .ashby-application-form-input-autocomplete-popup-result, [role="listbox"] [role="option"]';
+        // Greenhouse's location/school/degree/discipline selects and Ashby's location
+        // field search remotely: the menu shows "Loading..." for ~1s before options
+        // arrive. Wait for them instead of giving up.
+        for (let waited = 0; waited < 5000; waited += 250) {
+          await s.page.waitForTimeout(250);
+          if (await s.frame.locator(menu).count()) break;
+        }
         const exact = s.frame.locator(menu).filter({ hasText: new RegExp(`^\\s*${esc}\\s*$`, "i") }).first();
         if (await exact.count()) {
           await exact.click();
